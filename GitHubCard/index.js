@@ -3,7 +3,20 @@
     (replacing the placeholder with your Github name):
     https://api.github.com/users/<your name>
 */
+import axios from 'axios';
+console.log(axios);
+axios.get('https://api.github.com/users/declan-casey')
+.then((res) => {
+  const cards = document.querySelector(".cards")
+  cards.appendChild(markupMaker(res));
+  const getData = res.data;
+  console.log(getData);
+})
 
+
+.catch((problem) => {
+  console.log(problem);
+})
 /*
   STEP 2: Inspect and study the data coming back, this is YOUR
     github info! You will need to understand the structure of this
@@ -28,7 +41,27 @@
     user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const followersArray = [
+  "tetondan",
+  "dustinmyers",
+  "justsml",
+  "luishrd",
+  "bigknell",];
+
+  followersArray.forEach(item => {
+    axios.get(`https://api.github.com/users/${item}`)
+  .then((res) => {
+    const cards = document.querySelector(".cards")
+    cards.appendChild(markupMaker(res));
+    const getData = res.data;
+    console.log(getData);
+  })
+
+  .catch((problem) => {
+    console.log(problem);
+  })
+  })
+
 
 /*
   STEP 3: Create a function that accepts a single object as its only argument.
@@ -58,3 +91,48 @@ const followersArray = [];
     luishrd
     bigknell
 */
+function markupMaker(obj){
+  const cardDiv = document.createElement("div");
+  const image = document.createElement("img");
+  const cardInfo = document.createElement("div");
+  const myName = document.createElement("h3");
+  const userName = document.createElement("p");
+  const myLocation = document.createElement("p");
+  const myProfile = document.createElement("p");
+  const myGitAddress= document.createElement("a");
+  const followers = document.createElement("p");
+  const following = document.createElement("p");
+  const bio = document.createElement("p");
+
+  image.src = obj.data.avatar_url;
+  myName.textContent = obj.data.name;
+  userName.textContent = obj.data.login;
+  myLocation.textContent = `Location: ${obj.data.location}`;
+  myProfile.textContent = "Profile: "
+  myGitAddress.setAttribute("href", obj.data.url);
+  myGitAddress.innerHTML = obj.data.url;
+  followers.textContent = `Followers: ${obj.data.followers}`;
+  following.textContent = `Following: ${obj.data.following}`;
+  bio.textContent = `Bio: ${obj.data.bio}`;
+
+  cardDiv.appendChild(image);
+  cardDiv.appendChild(cardInfo);
+  cardInfo.appendChild(myName);
+  cardInfo.appendChild(userName);
+  cardInfo.appendChild(myLocation);
+  cardInfo.appendChild(myProfile);
+  myProfile.appendChild(myGitAddress);
+  cardInfo.appendChild(followers);
+  cardInfo.appendChild(following);
+  cardInfo.appendChild(bio);
+
+  cardDiv.classList.add("card");
+  cardInfo.classList.add("card-info");
+  myName.classList.add("name");
+  userName.classList.add("username");
+
+  // myGitAddress.addEventListener("click", => {
+  //   myGitAddress.classList.toggle("")
+  // })
+  return cardDiv;
+}
